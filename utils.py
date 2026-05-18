@@ -21,3 +21,13 @@ def get_chrom_sizes(genome, window_bp):
         )
 
     return chrom_sizes
+
+def bw_map(mapfile):
+    fa_dict = {}
+    bw_dict = {}
+    with open(mapfile) as f:
+        for l in f:
+            line = l.strip().split(' ')
+            fa_dict[line[0]] = line[1]
+            bw_dict[line[0]] = line[2]
+    return fa_dict, bw_dict

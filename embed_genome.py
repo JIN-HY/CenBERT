@@ -1,4 +1,5 @@
 import os
+import sys
 import numpy as np
 import torch
 
@@ -9,6 +10,8 @@ from utils import *
 
 
 DEVICE = DEVICE
+
+SAMPLE = sys.argv[1]
 
 tokenizer = AutoTokenizer.from_pretrained(
     DNABERT2_NAME,
@@ -61,7 +64,7 @@ def encode_chunks(chunks, batch_size=64):
 
             outputs = model(**tokens)
 
-            emb = outputs.last_hidden_state[:, 0]
+            emb = outputs[0][:, 0]
 
         emb = emb.cpu().numpy().astype(np.float16)
 
@@ -74,7 +77,9 @@ def main():
 
     os.makedirs(EMBEDDING_DIR, exist_ok=True)
 
-    genome = load_genome(GENOME_PATH)
+    fa_dict, bw_dict = bw_map(BW_MAP)
+
+    genome = load_genome(fa_dict[SAMPLE])
 
     for chrom in genome:
 

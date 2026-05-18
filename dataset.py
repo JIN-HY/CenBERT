@@ -76,7 +76,7 @@ class GenomeEmbeddingDataset(Dataset):
             WINDOW_BP
         ).mean(axis=1)
 
-        label = np.log1p(label)
+        #label = np.log1p(label)
 
         label = torch.tensor(
             label,

@@ -1,10 +1,10 @@
-DNABERT2_NAME = "zhihan1996.DNABERT-2-117M"
+DNABERT2_NAME = "./DNABERT-2-117M"
 
 EMBEDDING_DIR = "embeddings"
 CHECKPOINT_DIR = "checkpoints"
 
 # need a new config txt
-BW_PATH = 
+BW_MAP = "sample-bw.txt"
 
 
 DEVICE = "cuda"
