@@ -77,7 +77,7 @@ def main():
 
         total_loss = 0
 
-        for emb, label in loader:
+        for emb, label in train_loader:
 
             emb = emb.to(
                 DEVICE,
@@ -105,12 +105,41 @@ def main():
             total_loss += loss.item()
 
         mean_loss = (
-            total_loss / len(loader)
+            total_loss / len(train_loader)
         )
 
+        model.eval()
+        with torch.no_grad():
+            val_loss = 0
+            
+            for emb, label in val_loader:
+
+                emb = emb.to(
+                    DEVICE,
+                    non_blocking=True
+                )
+
+                label = label.to(
+                    DEVICE,
+                    non_blocking=True
+                )
+
+                pred = model(emb)
+
+                loss = criterion(
+                    pred,
+                    label
+                )
+
+                val_loss += loss.item()
+
+            mean_val_loss = (
+                val_loss / len(val_loader)
+            
+            )
         print(
             f"Epoch {epoch+1} "
-            f"| Loss: {mean_loss:.5f}"
+            f"| Train Loss: {mean_loss:.4f} | Val Loss: {mean_val_loss:.4f} "
         )
 
         # torch.save(

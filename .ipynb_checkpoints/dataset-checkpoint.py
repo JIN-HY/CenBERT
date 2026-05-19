@@ -36,7 +36,7 @@ class GenomeEmbeddingDataset(Dataset):
 
             for i in range(
                 0,
-                n_tokens - REGION_TOKENS
+                n_tokens - REGION_TOKENS, tokenstep
             ):
 
                 self.coords.append((chrom, i))
