@@ -157,7 +157,7 @@ def main():
         # )
     torch.save(
         model.state_dict(),
-        f"{CHECKPOINT_DIR}/CenBERT_all_0519.pt"
+        f"{CHECKPOINT_DIR}/CenBERT_all_0519-2.pt"
     )
 
 if __name__ == "__main__":
