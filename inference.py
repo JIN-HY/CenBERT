@@ -9,6 +9,7 @@ from Bio import SeqIO
 from config import *
 from utils import *
 from model import GlobalCentFormer
+from dataset import GenomeInferenceDataset
 
 
 # =========================================================
@@ -55,11 +56,18 @@ n_tokens = chrom_len // WINDOW_BP
 # LOAD EMBEDDINGS
 # =========================================================
 
-embeddings = np.memmap(
-    f"{EMBEDDING_DIR}/{CHROM}.fp16.mmap",
-    mode="r",
-    dtype=np.float16,
-    shape=(n_tokens, D_MODEL)
+dataset = GenomeInferenceDataset(
+    chrom_sizes=chrom_sizes,
+    tokenstep=TOKEN_STEP,
+    mmap_dir=EMBEDDING_DIR,
+    chrom=CHROM
+)
+
+loader = DataLoader(
+    dataset,
+    batch_size=64,
+    shuffle=False,
+    num_workers=0
 )
 
 
@@ -80,59 +88,54 @@ model.eval()
 
 
 # =========================================================
-# INFERENCE
+# PREDICTION ARRAYS
 # =========================================================
 
 pred_sum = np.zeros(n_tokens)
 pred_count = np.zeros(n_tokens)
 
-stride = 100
+
+# =========================================================
+# INFERENCE
+# =========================================================
 
 with torch.no_grad():
 
-    for start in range(
-        0,
-        n_tokens - REGION_TOKENS,
-        stride
-    ):
+    for emb, start_token in loader:
 
-        end = start + REGION_TOKENS
+        emb = emb.to(DEVICE)
 
-        x = embeddings[start:end]
-
-        x = torch.tensor(
-            x,
-            dtype=torch.float32
-        ).unsqueeze(0).to(DEVICE)
-
-        pred = model(x)
-
-        pred = pred.squeeze(0)
+        pred = model(emb)
 
         pred = pred.cpu().numpy()
 
-        # reverse log1p transform
         pred = np.expm1(pred)
 
-        pred_sum[start:end] += pred
-        pred_count[start:end] += 1
+        for i in range(len(start_token)):
+
+            s = start_token[i].item()
+
+            e = s + REGION_TOKENS
+
+            pred_sum[s:e] += pred[i]
+
+            pred_count[s:e] += 1
 
 
 # =========================================================
-# AVERAGE OVERLAPS
+# FINALIZE
 # =========================================================
 
-final_pred = pred_sum / np.maximum(pred_count, 1)
-
-
-# =========================================================
-# SAVE
-# =========================================================
+final_pred = pred_sum / np.maximum(
+    pred_count,
+    1
+)
 
 starts = np.arange(n_tokens) * WINDOW_BP
 ends = starts + WINDOW_BP
 
 df = pd.DataFrame({
+
     "chrom": CHROM,
     "start": starts,
     "end": ends,
