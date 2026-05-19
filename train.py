@@ -2,7 +2,7 @@ import os
 import torch
 import torch.nn as nn
 import sys
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import DataLoader, random_split, ConcatDataset
 
 import numpy as np
 
@@ -12,7 +12,6 @@ from utils import *
 from dataset import GenomeEmbeddingDataset
 from model import GlobalCentFormer
 
-SAMPLE = sys.argv[1]
 
 def main():
 
@@ -23,19 +22,29 @@ def main():
     
     fa_dict, bw_dict = bw_map(BW_MAP)
 
-    genome = load_genome(fa_dict[SAMPLE])
+    if len(sys.argv) == 2: 
+        samples = [sys.argv[1]]
+    else:
+        samples = fa_dict.keys()
 
-    chrom_sizes = get_chrom_sizes(
-        genome,
-        WINDOW_BP
-    )
+    datasets = []
+    for SAMPLE in samples:
+        genome = load_genome(fa_dict[SAMPLE])
+        chrom_sizes = get_chrom_sizes(
+            genome,
+            WINDOW_BP
+        )
 
-    dataset = GenomeEmbeddingDataset(
-        chrom_sizes=chrom_sizes,
-        tokenstep=TOKEN_STEP,
-        mmap_dir=EMBEDDING_DIR,
-        bw_path=bw_dict[SAMPLE]
-    )
+        dt = GenomeEmbeddingDataset(
+            chrom_sizes=chrom_sizes,
+            tokenstep=TOKEN_STEP,
+            mmap_dir=EMBEDDING_DIR,
+            bw_path=bw_dict[SAMPLE]
+        )
+
+        datasets.append(dt)
+
+    dataset = ConcatDataset(datasets)
 
     train_size = int(0.8 * len(dataset))
     val_size = len(dataset) - train_size
@@ -148,7 +157,7 @@ def main():
         # )
     torch.save(
         model.state_dict(),
-        f"{CHECKPOINT_DIR}/{SAMPLE}.pt"
+        f"{CHECKPOINT_DIR}/CenBERT_all_0519.pt"
     )
 
 if __name__ == "__main__":
