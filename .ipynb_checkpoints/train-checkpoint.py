@@ -2,7 +2,9 @@ import os
 import torch
 import torch.nn as nn
 import sys
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, random_split
+
+import numpy as np
 
 from config import *
 from utils import *
@@ -30,14 +32,31 @@ def main():
 
     dataset = GenomeEmbeddingDataset(
         chrom_sizes=chrom_sizes,
+        tokenstep=TOKEN_STEP,
         mmap_dir=EMBEDDING_DIR,
         bw_path=bw_dict[SAMPLE]
     )
 
-    loader = DataLoader(
+    train_size = int(0.9 * len(dataset))
+    val_size = len(dataset) - train_size
+
+    train_dataset, val_dataset = random_split(
         dataset,
+        [train_size, val_size]
+    )
+
+    train_loader = DataLoader(
+        train_dataset,
         batch_size=BATCH_SIZE,
         shuffle=True,
+        num_workers=0,
+        pin_memory=True
+    )
+
+    val_loader = DataLoader(
+        val_dataset,
+        batch_size=BATCH_SIZE,
+        shuffle=False,
         num_workers=0,
         pin_memory=True
     )

@@ -12,6 +12,7 @@ class GenomeEmbeddingDataset(Dataset):
     def __init__(
         self,
         chrom_sizes,
+        tokenstep,
         mmap_dir,
         bw_path
     ):
