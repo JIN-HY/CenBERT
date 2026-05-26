@@ -68,7 +68,7 @@ for SAMPLE in samples:
                 pred = pred.cpu().numpy()
 
                 #pred = np.expm1(pred)
-
+                print(start_token)
                 for i in range(len(start_token)):
 
                     dataset.add_prediction(

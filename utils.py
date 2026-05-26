@@ -50,7 +50,7 @@ from sklearn.metrics import (
     average_precision_score
 )
 
-from fastdtw import fastdtw
+# from fastdtw import fastdtw
 from scipy.spatial.distance import euclidean
 
 
@@ -196,7 +196,7 @@ def alignment_metrics(
 def overlap_metrics(
     pred,
     truth,
-    threshold=0.5
+    threshold=1
 ):
 
     pred = np.asarray(pred)
@@ -252,7 +252,7 @@ def overlap_metrics(
 def classification_metrics(
     pred,
     truth,
-    threshold=0.5
+    threshold=1
 ):
 
     pred = np.asarray(pred)
