@@ -50,8 +50,7 @@ from sklearn.metrics import (
     average_precision_score
 )
 
-# from fastdtw import fastdtw
-from scipy.spatial.distance import euclidean
+from fastdtw import fastdtw
 
 
 def regression_metrics(
@@ -289,7 +288,7 @@ def dtw_metrics(
     distance, path = fastdtw(
         pred,
         truth,
-        dist=euclidean
+        dist=lambda x, y: abs(x - y)
     )
 
     return {

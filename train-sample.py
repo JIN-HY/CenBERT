@@ -23,8 +23,8 @@ def main():
     fa_dict, bw_dict = bw_map(BW_MAP)
     samples = fa_dict.keys()
 
-    if len(sys.argv) >= 2: # exclude sample
-        val_samples = sys.argv[1:]
+    if len(sys.argv) >= 3: # exclude sample
+        val_samples = sys.argv[1:-1]
     else:
         train_samples = {sp for sp in fa_dict.keys() if sp not in val_samples}
 
@@ -157,9 +157,10 @@ def main():
         #     model.state_dict(),
         #     f"{CHECKPOINT_DIR}/epoch{epoch+1}.pt"
         # )
+    ptname = sys.argv[-1]
     torch.save(
         model.state_dict(),
-        f"{CHECKPOINT_DIR}/CenBERT_all_0519-2.pt"
+        f"{CHECKPOINT_DIR}/{ptname}.pt"
     )
 
 if __name__ == "__main__":

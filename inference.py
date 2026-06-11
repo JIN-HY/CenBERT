@@ -1,4 +1,4 @@
-
+import os
 import sys
 import numpy as np
 import torch
@@ -16,7 +16,7 @@ from dataset import GenomeInferenceDataset
 # =========================================================
 
 CHECKPOINT = sys.argv[1]
-
+outdir = sys.argv[2]
 
 model = GlobalCentFormer().to(DEVICE)
 model.load_state_dict(
@@ -29,8 +29,8 @@ model.eval()
 
 fa_dict, bw_dict = bw_map(BW_MAP)
 
-if len(sys.argv) > 2: 
-    samples = [sys.argv[2]]
+if len(sys.argv) > 3: 
+    samples = sys.argv[3:]
 else:
     samples = fa_dict.keys()
 
@@ -101,8 +101,9 @@ for SAMPLE in samples:
             "n_overlaps": counts
             })
 
-        outfile = f"prediction/{CHROM}.tsv"
-
+        outfile = f"prediction/{outdir}/{CHROM}.tsv"
+        os.makedirs(outdir, , exist_ok=True)
+        
         df.to_csv(
             outfile,
             sep="\t",

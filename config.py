@@ -1,4 +1,4 @@
-DNABERT2_NAME = "./DNABERT-2-117M"
+DNABERT2_NAME = "DNABERT-2-117M"
 
 EMBEDDING_DIR = "embeddings"
 CHECKPOINT_DIR = "checkpoints"
@@ -9,7 +9,7 @@ BW_MAP = "sample-bw.txt"
 
 DEVICE = "cuda"
 BATCH_SIZE = 64
-EPOCHS = 20
+EPOCHS = 15
 LR = 5e-5
 
 WINDOW_BP = 512
