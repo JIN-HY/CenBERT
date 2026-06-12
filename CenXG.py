@@ -3,9 +3,10 @@ import pyBigWig
 from xgboost import XGBRegressor
 from config import *
 from utils import *
+from scipy.stats import pearsonr, spearmanr
 
 SAMPLE = "S001"
-
+EMBEDDING_DIR = "/mnt/e/CENH3/embeddings"
 
 def load_targets(
     bw_path,
@@ -21,13 +22,13 @@ def load_targets(
 
         for start in range(
             0,
-            length,
+            length*window_bp,
             window_bp
         ):
 
             end = min(
                 start + window_bp,
-                length
+                length*window_bp
             )
 
             vals = bw.values(
@@ -64,6 +65,7 @@ def main():
         genome,
         WINDOW_BP
     )
+    print(chrom_sizes)
 
     all_X = []
 
@@ -96,6 +98,21 @@ def main():
 
     assert X.shape[0] == y.shape[0]
 
+    # random subsample
+    N = min(500_000, X.shape[0])
+
+    idx = np.random.choice(
+        X.shape[0],
+        size=N,
+        replace=False
+    )
+
+    X_sample = X[idx].astype(np.float32)
+    y_sample = y[idx].astype(np.float32)
+
+    print("Subsampled X shape:", X_sample.shape)
+    print("Subsampled y shape:", y_sample.shape)
+
     model = XGBRegressor(
         n_estimators=500,
         max_depth=8,
@@ -108,8 +125,8 @@ def main():
     )
 
     model.fit(
-        X,
-        y
+        X_sample,
+        y_sample
     )
 
     model.save_model(
@@ -117,3 +134,10 @@ def main():
     )
 
     print("Training finished.")
+
+    pred = model.predict(X)
+    pearson = pearsonr(pred, y)[0]
+    print(pearson)
+
+if __name__ == "__main__":
+    main()
