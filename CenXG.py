@@ -1,11 +1,14 @@
 import numpy as np
 import pyBigWig
+from sklearn.datasets import dump_svmlight_file
+import xgboost as xgb
 from xgboost import XGBRegressor
 from config import *
 from utils import *
+from scipy.stats import pearsonr, spearmanr
 
 SAMPLE = "S001"
-
+EMBEDDING_DIR = "/mnt/e/CENH3/embeddings"
 
 def load_targets(
     bw_path,
@@ -21,13 +24,13 @@ def load_targets(
 
         for start in range(
             0,
-            length,
+            length*window_bp,
             window_bp
         ):
 
             end = min(
                 start + window_bp,
-                length
+                length*window_bp
             )
 
             vals = bw.values(
@@ -79,6 +82,7 @@ def main():
         all_X.append(
             np.asarray(x, dtype=np.float32)
         )
+    print(len(all_X))
 
     X = np.concatenate(
         all_X,
@@ -91,11 +95,40 @@ def main():
         window_bp=WINDOW_BP
     )
 
-    print("X shape:", X.shape)
-    print("y shape:", y.shape)
+    # print("X shape:", X.shape)
+    # print("y shape:", y.shape)
 
-    assert X.shape[0] == y.shape[0]
+    # assert X.shape[0] == y.shape[0]
 
+    # dump_svmlight_file(
+    #     X,
+    #     y,
+    #     "/mnt/e/CENH3/train.svm",
+    #     zero_based=True
+    # )
+
+    # del X
+    # del all_X
+
+    # dtrain = xgb.DMatrix(
+    #     "/mnt/e/CENH3/train.svm#train.cache"
+    # )
+
+    # params = {
+    #     "objective": "reg:squarederror",
+    #     "tree_method": "hist",
+    #     "max_depth": 8,
+    #     "eta": 0.05,
+    #     "subsample": 0.8,
+    #     "colsample_bytree": 0.8,
+    #     "seed": 42,
+    # }
+
+    # model = xgb.train(
+    #     params,
+    #     dtrain,
+    #     num_boost_round=500
+    # )
     model = XGBRegressor(
         n_estimators=500,
         max_depth=8,
@@ -107,13 +140,16 @@ def main():
         random_state=42
     )
 
-    model.fit(
-        X,
-        y
-    )
+    model.fit(X, y)
 
     model.save_model(
         "xgboost_s001.json"
     )
 
-    print("Training finished.")
+    pred = model.predict(X)
+
+    pearson = pearsonr(pred, y)[0]
+    print(pearson)
+
+if __name__ == "__main__":
+    main()
