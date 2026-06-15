@@ -1,0 +1,11 @@
+S001 S001.fa qiezi_cent.bw_20250908/S001.cenh3.mapS001.log2ratio.bw
+S027 S027.fa qiezi_cent.bw_20250908/S027.cenh3.mapS027.bt2.log2ratio.bw
+S054 S054.fa qiezi_cent.bw_20250908/S054.cenh3.mapS054.log2ratio.bw
+S057 S057.fa qiezi_cent.bw_20250908/S057.cenh3.mapS057.log2ratio.bw
+S071 S071.fa qiezi_cent.bw_20250908/S071.cenh3.mapS071.log2ratio.bw
+S076 S076.fa qiezi_cent.bw_20250908/S076.cenh3.mapS076.bt2.log2ratio.bw
+S092 S092.fa qiezi_cent.bw_20250908/S092.cenh3.mapS092.log2ratio.bw
+S126 S126.fa qiezi_cent.bw_20250908/S126.cenh3.mapS126.bt2.log2ratio.bw
+S181 S181.fa qiezi_cent.bw_20250908/S181.cenh3.mapS181.bt2.log2ratio.bw
+S184 S184.fa qiezi_cent.bw_20250908/S184.cenh3.mapS184.bt2.log2ratio.bw
+S185 S185.fa qiezi_cent.bw_20250908/S185.cenh3.mapS185.log2ratio.bw

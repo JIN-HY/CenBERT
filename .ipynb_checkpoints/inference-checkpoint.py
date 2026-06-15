@@ -102,7 +102,7 @@ for SAMPLE in samples:
             })
 
         outfile = f"prediction/{outdir}/{CHROM}.tsv"
-        os.makedirs(outdir, , exist_ok=True)
+        os.makedirs(f"prediction/{outdir}", exist_ok=True)
         
         df.to_csv(
             outfile,
