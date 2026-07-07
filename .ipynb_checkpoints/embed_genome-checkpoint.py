@@ -82,6 +82,7 @@ def main():
     genome = load_genome(fa_dict[SAMPLE])
 
     for chrom in genome:
+        if os.path.exists(f"{EMBEDDING_DIR}/{chrom}.fp16.mmap"): continue
 
         print(f"Embedding {chrom}")
 

@@ -10,7 +10,7 @@ BW_MAP = "sample-bw.txt"
 DEVICE = "cuda"
 BATCH_SIZE = 64
 EPOCHS = 15
-LR = 5e-5
+LR = 1e-5
 
 WINDOW_BP = 512
 REGION_TOKENS = 256

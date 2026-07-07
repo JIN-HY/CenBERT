@@ -85,7 +85,7 @@ def main():
         weight_decay=1e-4
     )
 
-    criterion = nn.SmoothL1Loss()
+    criterion = nn.SmoothL1Loss(reduction="none")
 
     for epoch in range(EPOCHS):
 
@@ -107,10 +107,13 @@ def main():
 
             pred = model(emb)
 
+            weight = (1 + torch.relu(label)) ** 2
+
             loss = criterion(
                 pred,
                 label
             )
+            loss = (loss*weight).sum()/weight.sum()
 
             optimizer.zero_grad()
 
@@ -142,10 +145,13 @@ def main():
 
                 pred = model(emb)
 
+                weight = (1 + torch.relu(label)) ** 2
+
                 loss = criterion(
                     pred,
                     label
                 )
+                loss = (loss*weight).sum()/weight.sum()
 
                 val_loss += loss.item()
 
@@ -164,7 +170,7 @@ def main():
         # )
     torch.save(
         model.state_dict(),
-        f"{CHECKPOINT_DIR}/CenBERT_chrom_0521.pt"
+        f"{CHECKPOINT_DIR}/CenBERT_chrom_{'-'.join(val_chroms)}.pt"
     )
 
 if __name__ == "__main__":

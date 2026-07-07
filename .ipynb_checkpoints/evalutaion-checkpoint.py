@@ -64,12 +64,12 @@ def evaluate_prediction(
         )
     )
 
-    results.update(
-        dtw_metrics(
-            pred,
-            truth
-        )
-    )
+    # results.update(
+    #     dtw_metrics(
+    #         pred,
+    #         truth
+    #     )
+    # )
 
     return results
 
